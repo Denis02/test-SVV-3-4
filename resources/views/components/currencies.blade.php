@@ -1,8 +1,9 @@
 <div class="table-responsive">
     <div>
-        <input id="create_currency_btn" class="btn btn-primary" type="button" value="Add New Currency">
-        <a class="pull-right btn btn-outline-info" href="{{route('history')}}" target="_blank">History</a>
+        @auth <input id="create_currency_btn" class="btn btn-primary" type="button" value="Add New Currency"> @endauth
+        <a class="float-right btn btn-outline-info" href="{{route('history')}}" target="_blank">History</a>
     </div>
+    @if(isset($data))
     <table class="table table-striped table-bordered">
         <tr>
             <th width="20%">Currency</th>
@@ -18,5 +19,6 @@
         @endforeach
     </table>
     {!! $data->links() !!}
+    @endif
 </div>
 

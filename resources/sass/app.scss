@@ -1,1 +1,24 @@
-//
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+.box{
+  width:600px;
+  margin:0 auto;
+}
+
+.currency a{
+  color: #3490dc;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#edit_currency input, #edit_currency button[type="submit"],
+#modal-message{
+  display: none;
+}

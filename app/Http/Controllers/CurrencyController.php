@@ -21,7 +21,7 @@ class CurrencyController extends Controller
         {
             return view('components.currencies', compact('data'))->render();
         }else{
-            return view('welcome', compact('data'));
+            return view('home', compact('data'));
         }
     }
 
