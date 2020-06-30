@@ -1,5 +1,8 @@
 <div class="table-responsive">
-    <input id="create_currency_btn" class="btn btn-primary" type="button" value="Add New Currency">
+    <div>
+        <input id="create_currency_btn" class="btn btn-primary" type="button" value="Add New Currency">
+        <a class="pull-right btn btn-outline-info" href="{{route('history')}}" target="_blank">History</a>
+    </div>
     <table class="table table-striped table-bordered">
         <tr>
             <th width="20%">Currency</th>

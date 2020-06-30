@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Курс валют</title>
+        <title>Currency Rate UAH</title>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
@@ -22,7 +22,8 @@
                 cursor: pointer;
             }
 
-            #edit_currency input, #edit_currency button[type="submit"]{
+            #edit_currency input, #edit_currency button[type="submit"],
+            #modal-message{
                 display: none;
             }
         </style>
@@ -31,7 +32,8 @@
     <body>
     <br />
     <div class="container">
-        <h3 align="center"><a class="button primary" href="{{route('currencies')}}">Currencies</a></h3><br />
+        @include('components.modal-message')
+        <h3 align="center"><a class="button primary" href="{{route('currencies')}}">Currency Rate UAH</a></h3><br />
         <div id="table_data">
             @include('components.currencies')
         </div>
@@ -84,7 +86,9 @@
                         $('#table_data').html(data);
                     },
                     error: function(error) {
-                        console.log(error);
+                        if(error.status == 422)
+                            showMessage(error.responseText);
+                        else console.log(error);
                     }
                 });
             });
@@ -118,7 +122,6 @@
             $(document).on('click', '#create_currency button[type="submit"]', function(event){
                 event.preventDefault();
                 var data = $('#create_currency');
-                console.log(data.serialize());
                 $.ajax({
                     url: "/currency",
                     type: "POST",
@@ -130,7 +133,9 @@
                         $('#table_data').html(data);
                     },
                     error: function(error) {
-                        console.log(error);
+                        if(error.status == 422)
+                            showMessage(error.responseText);
+                        else console.log(error);
                     }
                 });
             });
@@ -140,7 +145,6 @@
                 var table = $('#edit_currency');
                 table.find('p').hide();
                 var inputs = table.find('input, button[type="submit"]').show();
-                console.log(inputs);
             });
 
             $(document).on('click', '#edit_currency button.delete', function(event){
@@ -162,7 +166,33 @@
                 });
             });
 
+            $(document).on('click', '#modal-message button', function(event){
+                event.preventDefault();
+                hideMessage();
+            });
+
         });
+
+        function showMessage(data) {
+            data = JSON.parse(data);
+            var block = $('#modal-message');
+            block.find('.modal-title').text(data.message);
+            var body = block.find('.modal-body').text('');
+            if(!$.isEmptyObject(data.errors)){
+                $.each(data.errors, function (index, value) {
+                    body.append('<div class="alert alert-danger" role="alert"><b>'+index+':</b> '+value+'</div>');
+                })
+            }
+            block.show();
+        }
+
+        function hideMessage(data) {
+            var block = $('#modal-message');
+            block.find('.modal-title').text('');
+            block.find('.modal-body').html('');
+            block.hide();
+        }
+
     </script>
     </body>
 

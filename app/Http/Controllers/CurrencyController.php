@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Currency;
+use App\Http\Requests\StoreCurrency;
+use App\Http\Requests\UpdateCurrency;
 use Illuminate\Http\Request;
 
 class CurrencyController extends Controller
@@ -14,7 +16,7 @@ class CurrencyController extends Controller
      */
     public function index(Request $request)
     {
-        $data = Currency::orderBy('currency', 'desc')->paginate(3);
+        $data = Currency::orderBy('currency', 'desc')->paginate(5);
         if($request->ajax())
         {
             return view('components.currencies', compact('data'))->render();
@@ -41,8 +43,10 @@ class CurrencyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCurrency $request)
     {
+        $validated = $request->validated();
+
         $data = new Currency();
         $data->currency = strtoupper($request->currency);
         $data->buy = $request->buy;
@@ -58,13 +62,16 @@ class CurrencyController extends Controller
      * @param  \App\Currency  $currency
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $code)
+    public function update(UpdateCurrency $request, $code)
     {
+        $validated = $request->validated();
+
         $data = Currency::where('currency', $code)->first();
         $data->currency = $request->currency;
         $data->buy = $request->buy;
         $data->sell = $request->sell;
         $data->save();
+
         return view('components.currency', compact('data'))->render();
     }
 
@@ -78,9 +85,17 @@ class CurrencyController extends Controller
     {
         $currency = Currency::where('currency', $code)->first();
         if($currency->delete()){
-            $data = Currency::orderBy('currency', 'desc')->paginate(3);
+            $data = Currency::orderBy('currency', 'desc')->paginate(5);
             return view('components.currencies', compact('data'))->render();
         }
         return response(false);
+    }
+
+    public function history()
+    {
+        $data = Currency::with(['history' => function ($query){
+                $query->orderBy('id', 'desc');
+            }])->get();
+        return response()->json($data);
     }
 }
